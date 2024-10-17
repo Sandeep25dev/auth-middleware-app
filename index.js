@@ -9,7 +9,7 @@ const JWT_SECRET = "USER_APP";
 app.use(express.json());
 
 app.get("/", function (req, res) {
-  res.send("Hello from the Homepage");
+  res.sendFile(__dirname + "/public/index.html");
 });
 app.post("/signup", function (req, res) {
   const username = req.body.username;
@@ -35,7 +35,7 @@ app.post("/signin", function (req, res) {
   if (user) {
     const token = jwt.sign(
       {
-        username: username,
+        username: user.username,
       },
       JWT_SECRET
     );

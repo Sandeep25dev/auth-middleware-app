@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Auth App</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+    <script>
+      async function signup() {
+        const username = document.getElementById("signup-username").value;
+        const password = document.getElementById("signup-password").value;
+
+        const response = await axios.post("http://localhost:3000/signup", {
+          username: username,
+          password: password,
+        });
+        alert("Signed up successfully");
+      }
+
+      async function getUserInformation() {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          const response = await axios.get("http://localhost:3000/me", {
+            headers: {
+              Authorization: token,
+            },
+          });
+          document.getElementById("information").innerHTML =
+            response.data.username;
+        } else {
+          document.getElementById("information").innerHTML = "";
+        }
+      }
+      getUserInformation();
+
+      async function signin() {
+        const username = document.getElementById("signin-username").value;
+        const password = document.getElementById("signin-password").value;
+        try {
+          const response = await axios.post("http://localhost:3000/signin", {
+            username: username,
+            password: password,
+          });
+          localStorage.setItem("token", response.data.token);
+          getUserInformation();
+          alert("signed-in successfully");
+        } catch (err) {
+          console.log(err);
+          alert("error while signing up");
+        }
+      }
+      async function logout() {
+        localStorage.removeItem("token");
+        getUserInformation();
+      }
+    </script>
+  </head>
+  <body>
+    <div>
+      Signup
+      <input
+        type="text"
+        name="username"
+        id="signup-username"
+        placeholder="Username"
+      />
+      <input
+        type="password"
+        name="password"
+        id="signup-password"
+        placeholder="Password"
+      />
+      <button onclick="signup()">Submit</button>
+    </div>
+    <div>
+      Signin
+      <input
+        type="text"
+        name="username"
+        id="signin-username"
+        placeholder="Username"
+      />
+      <input
+        type="password"
+        name="password"
+        id="signin-password"
+        placeholder="Password"
+      />
+      <button onclick="signin()">Submit</button>
+    </div>
+    <div>
+      User information:
+      <div id="information"></div>
+    </div>
+    <div>
+      <button onclick="logout()">Logout</button>
+    </div>
+  </body>
+</html>
